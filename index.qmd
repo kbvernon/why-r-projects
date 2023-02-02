@@ -1,0 +1,331 @@
+---
+format: 
+  revealjs:
+    theme: [default, custom.scss]
+    transition: fade
+    highlight-style: a11y
+    code-line-numbers: false
+    slide-number: true
+---
+
+## How do I work this? {.title-right background-image="images/how-do-i-work-this.png"}
+
+::: title-top
+this ⟵ R project
+:::
+
+::: title-bottom
+`r Sys.Date()`
+
+🎵 [Talking Heads - Once In A Lifetime](https://www.youtube.com/watch?v=-oVami1uT7Q&t=3241s&ab_channel=ChristopherHazard)
+
+{{< fa brands github >}} [kbvernon/why-r-projects](https://github.com/kbvernon/why-r-projects)
+:::
+
+## acknowledgments
+
+::: {.absolute top="170" left="0"}
+Most of the ideas presented here come from Jenny Bryan's blog post, [Project-oriented workflow](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/).  
+
+Similar ideas can be found in [chapter nine of R4DS (2e)](https://r4ds.hadley.nz/workflow-scripts.html).  
+:::
+
+## ⚠️ problem 1: crooked paths
+
+::: {.absolute top="170" left="0"}
+A guest asks where the bathroom is, so you say:
+
+``` r
+"Go to the kitchen / turn left down the hallway / first door on the right"
+```
+
+Easy enough. Now imagine going to someone else's house and offering the [*exact same directions*]{.underline}.
+
+::: {.fragment style="margin-top:2em;"}
+**Now you know what's wrong with absolute file paths.**
+:::
+:::
+
+## crooked paths in [{{< fa brands r-project >}}]{style="color:steelblue;"}
+
+[crooked paths in R]{.menu-title style="display:none"}
+
+::: {.absolute top="170" left="0"}
+This appears at the top of Blake's R script:
+
+``` r
+setwd("C:/Users/blake/this/path/works/only/on/my/computer")
+```
+
+which is fine for Blake, but who works alone in science?
+:::
+
+## ⚠️ problem 2: cross-contamination
+
+::: {.absolute top="170" left="0"}
+Imagine trying to cook dinner in a CDC lab...
+
+::: {.fragment style="margin-top:2em;"}
+**That's EXACTLY what it's like working on multiple research projects in the same programming work-space.**
+
+<br>
+
+Seriously, don't do it.
+:::
+
+:::
+
+## cross-contamination in [{{< fa brands r-project >}}]{style="color:steelblue;"}
+
+[cross-contamination in R]{.menu-title style="display:none"}
+
+![](images/cross-contamination.png)
+
+## solution ⟵ [{{< fa brands r-project >}}]{style="color:steelblue;"} project
+
+[solution ⟵ R project]{.menu-title style="display:none"}
+
+![Artwork by [Allison Horst](https://allisonhorst.com/).](https://cdn.myportfolio.com/45214904-6a61-4e23-98d6-b140f8654a40/e684ee45-98fc-469e-997c-e2d68b0096cd_rw_1920.png?h=d754f634e6fc1e292430124fbe44dad7){fig-alt="A cartoon of a cracked glass cube looking frustrated with casts on its arm and leg, with bandaids on it, containing “setwd”, looks on at a metal riveted cube labeled “R Proj” holding a skateboard looking sympathetic, and a smaller cube with a helmet on labeled “here” doing a trick on a skateboard."}
+
+## 🏗️ project basics
+
+A typical project folder might look like this:
+
+:::::: {.r-stack}  
+::: {.fragment .fade-out fragment-index="0" style="margin:0 auto auto 0;"}  
+:::{.dir style="width:630px"}  
+📁 my-r-project 
+
+- |- 📁 \_misc  
+- |- 📁 data  
+  - |- {{< fa file-excel >}} data.csv  
+  - |- {{< fa database >}} my-spatial.gpkg  
+  - |- {{< fa file-image >}} elevation.tiff  
+- |- 📁 figures  
+- |- 📁 R  
+  - |- 📄 analysis.qmd  
+  - |- 📄 data-wrangling.R  
+- |- 📄 .gitignore  
+- |- 📄 my-r-project.Rproj __<--- this makes it an R project!__  
+- |- 📄 README.md  
+:::
+
+If you open this in the RStudio IDE, the working directory will automatically be set to ["root/path/to/my-r-project"]{style="color:#008000;"}.
+:::
+
+::: {.fragment .fade-in-then-out fragment-index="0" style="margin:0 auto auto 0"}  
+:::{.dir style="width:630px"}
+📁 my-r-project 
+
+- |- 📁 \_misc  __<--- what goes here?__
+- |- 📁 data  
+  - |- {{< fa file-excel >}} data.csv  
+  - |- {{< fa database >}} my-spatial.gpkg  
+  - |- {{< fa file-image >}} elevation.tiff  
+- |- 📁 figures  
+- |- 📁 R  
+  - |- 📄 analysis.qmd  
+  - |- 📄 data-wrangling.R  
+- |- 📄 .gitignore  
+- |- 📄 my-r-project.Rproj   
+- |- 📄 README.md  
+:::
+:::
+::::::
+
+## workflow vs product
+
+::: {.r-stack}
+::: {.fragment .fade-out fragment-index="0" style="margin:0 auto auto 0;"}
+
+Need to distinguish the __essentials__ from the __inessentials__!
+
+:::
+::: {.fragment .fade-in-then-out fragment-index="0" style="width:610px;margin:0 auto auto 0;"}
+x is product iff x can __run without error__
+
+``` r
+head(cars)
+mean(cars$dist) + 1
+
+# don't forget to do your laundry!
+i <- sample(1:nrow(cars), size = 25, replace = FALSE)
+cars2 <- cars[i, ]
+
+plot(cars2) 
+
+Sys.Date()
+
+bb8 <- lm(dist ~ speed, data = cars2)
+summary(bb8)
+```
+
+But all this will 🏃🏃🏃...
+:::
+
+::: {.fragment .fade-in-then-out fragment-index="1" style="width:610px;margin:0 auto auto 0"}
+x is product iff the __goal requires x__ [✔]{.green5}
+
+``` {.r code-line-numbers="5,6,8,12,13"}
+head(cars)
+mean(cars$dist) + 1
+
+# don't forget to do your laundry!
+i <- sample(1:nrow(cars), size = 25, replace = FALSE)
+cars2 <- cars[i, ] 
+
+plot(cars2) # <--- is this necessary?
+
+Sys.Date()
+
+bb8 <- lm(dist ~ speed, data = cars2)
+summary(bb8)
+```
+
+But teleology means it just depends... 🤷‍
+:::
+:::
+
+## a good rule of thumb 👍
+
+::: {.absolute bottom=0 left=0}
+![](images/calvin-and-hobbes.png)
+:::
+::: {.absolute top=100}
+consider what details you'd include when giving directions 
+
+your code is like that, but from your raw data to your results  
+:::
+
+## only the source is real
+
+![](images/source-is-truth.png)
+
+## so, be like Quine
+
+:::::: {.columns}
+::: {.column width="33%"}
+![](images/quine.jpeg){width="100%"}
+:::
+::: {.column width="67%"}
+> "Wyman's overpopulated universe is in many ways unlovely. It offends the aesthetic sense of us who have __a taste for desert landscapes__, but this is not the worst of it. Wyman's slum of possibles is a breeding ground for disorderly elements."  
+> _On What There Is_ (1948)  
+
+:::
+::::::
+
+Translation: trust your R script! and be ruthless with your use of `rm()`! 
+
+## `here()` I am
+
+:::::: {.r-stack}
+::: {.fragment .fade-out fragment-index=0}
+![Artwork by [Allison Horst](https://allisonhorst.com/).](https://cdn.myportfolio.com/45214904-6a61-4e23-98d6-b140f8654a40/57457fc3-1d2d-4a3b-a9b7-f0b62e418cd5_rw_1920.png?h=e0721f766fc8f031edeb67f7f8024595){width="60%" fig-align=left fig-alt='A cartoon showing two paths side-by-side. On the left is a scary spooky forest, with spiderwebs and gnarled trees, with file paths written on the branches like “~/mmm/nope.csv” and “setwd(“/haha/good/luck/”), with a scared looking cute fuzzy monster running out of it. On the right is a bright, colorful path with flowers, rainbow and sunshine, with signs saying “here!” and “it’s all right here!” A monster facing away from us in a backpack and walking stick is looking toward the right path. Stylized text reads “here: find your path.”'}
+:::
+::: {.fragment .fade-in-then-out fragment-index=0 style="width:800px;margin:0 auto auto 0;"}
+
+Note that `here()` finds the path to the project folder, though RStudio will do this, too...
+
+```r
+library(here)
+
+# on blake's computer
+here() 
+#> [1] "C:/Users/blake/rstuff/our-r-project"
+
+# on bob's computer
+here()
+#> [1] "C:/Users/bob/likes/subfolders/our-r-project"
+
+# on simon's computer
+here()
+#> [1] "?????/our-r-project"
+```
+
+:::
+::: {.fragment .fade-in fragment-index=1 style="width:800px;margin:0 auto auto 0;"}
+
+`here()`, however, will also reference the top project directory no matter where you are in the project.
+
+```r
+library(here)
+
+# on blake's computer, in the R folder
+here("data", "elevation.tiff") 
+#> [1] "C:/Users/blake/rstuff/our-r-project/data/elevation.tiff"
+
+# on bob's computer, in the figures folder
+here("data", "elevation.tiff")
+#> [1] "C:/Users/bob/likes/subfolders/our-r-project/data/elevation.tiff"
+
+# on simon's computer, in the _misc folder
+here("data", "elevation.tiff")
+#> [1] "?????/our-r-project/data/elevation.tiff"
+```
+:::
+::::::
+
+## but the multiple drafts problem!
+
+:::{.dir}  
+📁 my-r-project 
+
+- |- 📁 manuscript 
+  - |- 📄 draft_230202.docx
+  - |- 📄 draft_bob-commentss_230317.docx
+  - |- 📄 draft_simon-comments_230319.docx
+  - |- 📄 draft_simon-comments-on-bobs-comments_230318.docx
+  - |- 📄 draft_blake-makes-changes-without-reading-comments_230320.docx
+  - |- 📄 draft_bob-comments-on-newest-draft_230402.docx
+  - |- 📄 draft_blake-incorporates-simons-comments-from-230319.docx
+  - |- 📄 draft_simon-changes-his-mind-about-original-draft_230415.docx
+:::
+
+etc., etc., etc.  
+
+and we haven't even gotten to drafts of our R scripts! hmmm... 🤔
+
+## he got git {{< fa brands github >}}
+
+:::::: {.columns}
+::: {.column width="40%"}
+::: {.absolute left=0}
+![[xkcd 1597](https://xkcd.com/1597/)](https://imgs.xkcd.com/comics/git.png)
+:::
+:::
+::: {.column width="60%"}
+Once you have git and Github setup, RStudio makes version control super super easy.  
+
+See [happy git with r](https://happygitwithr.com/index.html) for details.  
+:::
+::::::
+
+## An R project should be __self-contained__
+
+::: {.fragment .absolute top=130 left=0}
+"but I want to share data across projects," you will inevitably find yourself saying
+:::
+
+::: {.fragment .absolute top=310 left=0}
+__and now you're on the cutting edge__ 🔪🔪🔪
+:::
+
+## `pin()` your data?
+
+:::::: {.columns}
+::: {.column width="30%"}
+![](https://pins.rstudio.com/logo.png)
+:::
+::: {.column width="70%"}
+
+> "The pins package publishes data, models, and other R objects, making it easy to share them across projects and with your colleagues."  
+> - From the [package website]((https://pins.rstudio.com/index.html))
+
+:::
+::::::
+
+This looks promising, but I don't have much experience with it. Need buy in from the collabs on using projects first...
+
+## now for some hands-on stuff
+
+let's make an R project!
